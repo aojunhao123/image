@@ -196,8 +196,8 @@ const Preview: React.FC<PreviewProps> = props => {
   } = props;
 
   const imgRef = useRef<HTMLImageElement>();
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLElement>(null);
-  const [wrapperEl, setWrapperEl] = useState<HTMLDivElement>(null);
 
   const groupContext = useContext(PreviewGroupContext);
   const showLeftOrRightSwitches = groupContext && count > 1;
@@ -391,13 +391,13 @@ const Preview: React.FC<PreviewProps> = props => {
   };
 
   // =========================== Focus ============================
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (open) {
       triggerRef.current = document.activeElement as HTMLElement;
     }
   }, [open]);
 
-  useLockFocus(open && !!wrapperEl, () => wrapperEl);
+  useLockFocus(open && portalRender, () => wrapperRef.current);
 
   // ========================== Render ==========================
   const bodyStyle: React.CSSProperties = {
@@ -435,7 +435,7 @@ const Preview: React.FC<PreviewProps> = props => {
 
           return (
             <div
-              ref={setWrapperEl}
+              ref={wrapperRef}
               className={clsx(prefixCls, rootClassName, classNames.root, motionClassName, {
                 [`${prefixCls}-movable`]: movable,
                 [`${prefixCls}-moving`]: isMoving,
