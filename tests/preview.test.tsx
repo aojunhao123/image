@@ -1296,4 +1296,28 @@ describe('Preview', () => {
 
     rectSpy.mockRestore();
   });
+
+  it('Focus should not be trapped when focusTrap is false', () => {
+    const rectSpy = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({
+      x: 0, y: 0, width: 100, height: 100,
+      top: 0, right: 100, bottom: 100, left: 0,
+      toJSON: () => undefined,
+    } as DOMRect);
+
+    const { container } = render(<Image src="src" alt="no trap" preview={{ open: true, focusTrap: false }} />);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    const preview = document.querySelector('.rc-image-preview') as HTMLElement;
+    expect(preview).toBeTruthy();
+
+    // Focus outside the preview should not be redirected back
+    const wrapper = container.querySelector('.rc-image') as HTMLElement;
+    wrapper.focus();
+    expect(document.activeElement).toBe(wrapper);
+
+    rectSpy.mockRestore();
+  });
 });
