@@ -90,6 +90,10 @@ export interface InternalPreviewConfig {
   maskClosable?: boolean;
   afterOpenChange?: (open: boolean) => void;
 
+  // Focus
+  /** Whether to trap focus within the preview when open. Default is true. */
+  focusTrap?: boolean;
+
   // Operation
   movable?: boolean;
   icons?: OperationIcons;
@@ -195,6 +199,7 @@ const Preview: React.FC<PreviewProps> = props => {
     styles = {},
     mousePosition,
     zIndex,
+    focusTrap = true,
   } = props;
 
   const imgRef = useRef<HTMLImageElement>();
@@ -399,7 +404,7 @@ const Preview: React.FC<PreviewProps> = props => {
     }
   }, [open]);
 
-  useLockFocus(open && portalRender, () => wrapperRef.current);
+  useLockFocus(focusTrap && open && portalRender, () => wrapperRef.current);
 
   // ========================== Render ==========================
   const bodyStyle: React.CSSProperties = {
