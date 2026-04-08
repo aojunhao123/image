@@ -197,6 +197,8 @@ const Preview: React.FC<PreviewProps> = props => {
 
   const imgRef = useRef<HTMLImageElement>();
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLElement>(null);
+
   const groupContext = useContext(PreviewGroupContext);
   const showLeftOrRightSwitches = groupContext && count > 1;
   const showOperationsProgress = groupContext && count >= 1;
@@ -366,6 +368,10 @@ const Preview: React.FC<PreviewProps> = props => {
   const onVisibleChanged = (nextVisible: boolean) => {
     if (!nextVisible) {
       setLockScroll(false);
+
+      // Restore focus to the trigger element after leave animation
+      triggerRef.current?.focus?.();
+      triggerRef.current = null;
     }
     afterOpenChange?.(nextVisible);
   };
@@ -385,6 +391,12 @@ const Preview: React.FC<PreviewProps> = props => {
   };
 
   // =========================== Focus ============================
+  useLayoutEffect(() => {
+    if (open) {
+      triggerRef.current = document.activeElement as HTMLElement;
+    }
+  }, [open]);
+
   useLockFocus(open && portalRender, () => wrapperRef.current);
 
   // ========================== Render ==========================
